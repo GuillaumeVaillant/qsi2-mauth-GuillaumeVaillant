@@ -1,6 +1,6 @@
 const express = require('express');
 const jwt = require('jwt-simple');
-const { createUser, loginUser } = require('../controller/users');
+const { createUser, loginUser, getUser } = require('../controller/users');
 const logger = require('../logger');
 
 const apiUsers = express.Router();
@@ -23,7 +23,7 @@ const apiUsers = express.Router();
  * @apiSuccess {JSON} profile Profile informations about the User.
  */
 apiUsers.post('/', (req, res) =>
-  !req.body.email || !req.body.password
+  !req.body.email || !req.body.password 
     ? res.status(400).send({
         success: false,
         message: 'email and password are required'
@@ -93,6 +93,32 @@ apiUsersProtected.get('/', (req, res) =>
     profile: req.user,
     message: 'user logged in'
   })
+);
+
+// GET /api/v1/users/  "get info of logged user"
+apiUsers.get('/', (req, res) =>
+  !req.body.id 
+    ? res.status(400).send({
+        success: false,
+        message: 'id is required'
+      })
+    : getUser(req.body)
+        .then(user => {
+          const token = jwt.encode({ id: user.id }, process.env.JWT_SECRET);
+          return res.status(201).send({
+            success: true,
+            token: `JWT ${token}`,
+            profile: user,
+            message: 'get info works'
+          });
+        })
+        .catch(err => {
+          logger.error(`💥 Failed to get infos user : ${err.stack}`);
+          return res.status(500).send({
+            success: false,
+            message: `${err.name} : ${err.message}`
+          });
+        })
 );
 
 module.exports = { apiUsers, apiUsersProtected };
