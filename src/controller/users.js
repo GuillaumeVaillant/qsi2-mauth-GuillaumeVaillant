@@ -51,8 +51,41 @@ const getUser = ({ id }) =>
       : Promise.reject(new Error('UNKOWN OR DELETED USER'))
   );
 
+// UpdateAt automatique refresh 
+const deleteUser = ({ id }) =>
+  Users.update( {deletedAt : Date.now() },{
+    where: {id},
+    returning: true,
+    plain: true
+  }).then(user =>
+    user && !user.deletedAt
+      ? true
+    : Promise.reject(new Error('CANT DELETED USER'))
+  );
+
 module.exports = {
   createUser,
   getUser,
-  loginUser
+  loginUser,
+  deleteUser
 };
+
+
+/*
+
+db.connections.update({
+  user: data.username,
+  chatroomID: data.chatroomID
+}, {
+  where: { socketID: socket.id },
+  returning: true,
+  plain: true
+})
+.then(function (result) {
+  console.log(result);   
+  // result = [x] or [x, y]
+  // [x] if you're not using Postgres
+  // [x, y] if you are using Postgres
+});
+
+*/

@@ -1,6 +1,6 @@
 const express = require('express');
 const jwt = require('jwt-simple');
-const { createUser, loginUser, getUser } = require('../controller/users');
+const { createUser, loginUser, deleteUser } = require('../controller/users');
 const logger = require('../logger');
 
 const apiUsers = express.Router();
@@ -86,7 +86,10 @@ apiUsers.post('/login', (req, res) =>
         })
 );
 
+// Fonctionne avec le token de l'utilisateur -> pas besoin de verifier s'il s'est connecté
 const apiUsersProtected = express.Router();
+
+// GET /api/v1/users/  "get info of logged user"
 apiUsersProtected.get('/', (req, res) =>
   res.status(200).send({
     success: true,
@@ -95,30 +98,27 @@ apiUsersProtected.get('/', (req, res) =>
   })
 );
 
-// GET /api/v1/users/  "get info of logged user"
-apiUsers.get('/', (req, res) =>
-  !req.body.id 
-    ? res.status(400).send({
+// DELETE /api/v1/users/  "delete the logged user"
+apiUsersProtected.delete('/', (req, res) =>
+!req.user.id 
+? res.status(400).send({
+    success: false,
+    message: 'id is required'
+  })
+: deleteUser(req.user)
+    .then(user => 
+      res.status(201).send({
+        success: true,
+        profile: user,
+        message: 'delte user works'
+      }))
+    .catch(err => {
+      logger.error(`💥 Failed to delte user : ${err.stack}`);
+      return res.status(500).send({
         success: false,
-        message: 'id is required'
-      })
-    : getUser(req.body)
-        .then(user => {
-          const token = jwt.encode({ id: user.id }, process.env.JWT_SECRET);
-          return res.status(201).send({
-            success: true,
-            token: `JWT ${token}`,
-            profile: user,
-            message: 'get info works'
-          });
-        })
-        .catch(err => {
-          logger.error(`💥 Failed to get infos user : ${err.stack}`);
-          return res.status(500).send({
-            success: false,
-            message: `${err.name} : ${err.message}`
-          });
-        })
+        message: `${err.name} : ${err.message}`
+      });
+    })
 );
 
 module.exports = { apiUsers, apiUsersProtected };
