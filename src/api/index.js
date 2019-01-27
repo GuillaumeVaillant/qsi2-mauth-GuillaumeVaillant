@@ -1,5 +1,6 @@
 const express = require('express');
 const { apiUsers, apiUsersProtected } = require('./users');
+const { apiGroups} = require('./groups');
 const { isAuthenticated, initAuth } = require('../controller/auth');
 // create an express Application for our api
 const api = express();
@@ -28,7 +29,8 @@ apiRoutes
   )
   // connect api users router
   .use('/users', apiUsers)
-  // api bellow this middelware require Authorization
+  .use('/groups',apiGroups)
+  // api bellow this middelware require Authorization -> à partir d'ici il faut avoir un token valide
   .use(isAuthenticated)
   .use('/users', apiUsersProtected)
   .use((err, req, res, next) => {
