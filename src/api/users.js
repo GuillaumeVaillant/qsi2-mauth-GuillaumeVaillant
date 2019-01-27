@@ -1,6 +1,6 @@
 const express = require('express');
 const jwt = require('jwt-simple');
-const { createUser, loginUser, deleteUser } = require('../controller/users');
+const { createUser, loginUser, deleteUser, updateUser } = require('../controller/users');
 const logger = require('../logger');
 
 const apiUsers = express.Router();
@@ -120,5 +120,30 @@ apiUsersProtected.delete('/', (req, res) =>
       });
     })
 );
+
+// PUT /api/v1/users/  "modify info of logged user"
+apiUsersProtected.put('/', (req, res) =>
+!req.body.email || !req.body.password
+? res.status(400).send({
+    success: false,
+    message: 'email and password are required'
+  })
+: updateUser(req.user,req.body)
+    .then(user => 
+      res.status(201).send({
+        success: true,
+        profile: user,
+        message: 'update user works'
+      }))
+    .catch(err => {
+      logger.error(`💥 Failed to update user : ${err.stack}`);
+      return res.status(500).send({
+        success: false,
+        message: `${err.name} : ${err.message}`
+      });
+    })
+);
+
+
 
 module.exports = { apiUsers, apiUsersProtected };

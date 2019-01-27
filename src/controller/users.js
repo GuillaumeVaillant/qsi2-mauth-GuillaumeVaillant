@@ -51,7 +51,7 @@ const getUser = ({ id }) =>
       : Promise.reject(new Error('UNKOWN OR DELETED USER'))
   );
 
-// UpdateAt automatique refresh 
+// UpdateAt automatique refresh -> 
 const deleteUser = ({ id }) =>
   Users.update( {deletedAt : Date.now() },{
     where: {id},
@@ -63,11 +63,23 @@ const deleteUser = ({ id }) =>
     : Promise.reject(new Error('CANT DELETED USER'))
   );
 
+const updateUser = (userCurrent, {firstName, lastName, email, password }) => // pas moyen de passer req.body ?
+  Users.update( {firstName, lastName, email, hash : password },{
+    where: { id: userCurrent.id},
+    returning: true,
+    plain: true
+  }).then(user =>
+    user && !user.deletedAt
+      ? true
+    : Promise.reject(new Error('CANT UPDATED USER'))
+  );
+
 module.exports = {
   createUser,
   getUser,
   loginUser,
-  deleteUser
+  deleteUser,
+  updateUser
 };
 
 

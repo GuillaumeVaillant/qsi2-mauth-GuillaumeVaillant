@@ -3,12 +3,24 @@ const { apiUsers, apiUsersProtected } = require('./users');
 const { isAuthenticated, initAuth } = require('../controller/auth');
 // create an express Application for our api
 const api = express();
+
 initAuth();
+/*
+const bodyParser = require('body-parser');
+
+// parse application/x-www-form-urlencoded
+api.use(bodyParser.urlencoded({ extended: true }))
+// parse application/json
+api.use(bodyParser.json())
+*/
 
 // apply a middelware to parse application/json body
+
 api.use(express.json({ limit: '1mb' }));
+
 // create an express router that will be mount at the root of the api
 const apiRoutes = express.Router();
+
 apiRoutes
   // test api
   .get('/', (req, res) =>

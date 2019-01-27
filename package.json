@@ -31,7 +31,11 @@
   },
   "dependencies": {
     "bcrypt": "^3.0.3",
+    "body-parser": "^1.18.3",
+    "ejs": "*",
     "express": "^4.16.4",
+    "helmet": "*",
+    "hpp": "*",
     "jwt-simple": "^0.5.5",
     "lodash.omit": "^4.5.0",
     "passport": "^0.4.0",
@@ -40,9 +44,6 @@
     "pg-hstore": "^2.3.2",
     "pino": "^5.10.6",
     "pino-pretty": "^2.5.0",
-    "sequelize": "^4.42.0",
-    "hpp": "*",
-    "helmet": "*",
-    "ejs": "*"
+    "sequelize": "^4.42.0"
   }
 }
