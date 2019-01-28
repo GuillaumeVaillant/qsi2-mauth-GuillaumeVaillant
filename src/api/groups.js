@@ -1,16 +1,26 @@
 const express = require('express');
 const jwt = require('jwt-simple');
-const { createGroup, addUserGroup } = require('../controller/groups');
+const { createGroup, addUserGroup, getGroup } = require('../controller/groups');
 const logger = require('../logger');
 
 const apiGroups = express.Router();
 
 // http://127.0.0.1:1818/api/v1/groups ok 
 apiGroups.get('/', (req, res) =>
-  res.status(200).send({
-    success: true,
-    message: 'api group build'
-  })
+  getGroup().then(group => {
+      res.status(201).send({
+        success: true,
+        profile: group,
+        message: 'get groups',
+      });
+    })
+    .catch(err => {
+      logger.error(`💥 Failed to get groups : ${err.stack}`);
+      return res.status(500).send({
+        success: false,
+        message: `${err.name} : ${err.message}`,
+      });
+    })
 );
 
 apiGroups.post('/', (req, res) =>

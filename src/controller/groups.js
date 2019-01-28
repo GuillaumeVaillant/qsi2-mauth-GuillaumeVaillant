@@ -15,21 +15,8 @@ const createGroup = ({ title, description, metadata  }) =>
     )
   );
 
-const getGroup = ({ id }) =>
-  Groups.findOne({
-    where: {
-      id
-    }
-  }).then(user =>
-    user && !user.deletedAt
-      ? omit(
-          user.get({
-            plain: true
-          }),
-          Groups.excludeAttributes
-        )
-      : Promise.reject(new Error('UNKOWN OR DELETED USER'))
-  );
+const getGroup = () =>
+  Groups.findAll();
 
 // UpdateAt automatique refresh -> 
 const deleteUserGroup = ({ id }) =>
@@ -51,6 +38,8 @@ const addUserGroup = (id, idGroup) => // pas moyen de passer req.body ?
   }).then(group =>
     group ? group.addUser(id) : Promise.reject(new Error('CANT ADD USER IN GROUP'))
   );
+
+
 
 module.exports = {
   createGroup,
