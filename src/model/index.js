@@ -27,4 +27,10 @@ Object.keys(db).forEach(modelName => {
 
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
+
+db.groups = require('./groups')(sequelize, Sequelize); 
+db.users = require('./users')(sequelize, Sequelize); 
+
+db.groups.belongsToMany(db.users, {through: 'UsersGroup'});
+
 module.exports = db;

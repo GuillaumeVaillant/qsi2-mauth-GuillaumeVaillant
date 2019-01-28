@@ -1,15 +1,14 @@
 const omit = require('lodash.omit');
 const { Groups } = require('../model');
 
-const createGroup = ({ firstName, lastName, email, password }) =>
+const createGroup = ({ title, description, metadata  }) =>
   Groups.create({
-    email,
-    firstName: firstName || '',
-    lastName: lastName || '',
-    hash: password
-  }).then(user =>
+    title: title || '',
+    description: description || '',
+    metadata
+  }).then(group =>
     omit(
-      user.get({
+      group.get({
         plain: true
       }),
       Groups.excludeAttributes
@@ -63,22 +62,3 @@ module.exports = {
   addUserGroup
 };
 
-
-/*
-
-db.connections.update({
-  user: data.username,
-  chatroomID: data.chatroomID
-}, {
-  where: { socketID: socket.id },
-  returning: true,
-  plain: true
-})
-.then(function (result) {
-  console.log(result);   
-  // result = [x] or [x, y]
-  // [x] if you're not using Postgres
-  // [x, y] if you are using Postgres
-});
-
-*/
