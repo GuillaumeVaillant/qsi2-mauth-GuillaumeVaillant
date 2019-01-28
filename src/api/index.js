@@ -1,9 +1,18 @@
 const express = require('express');
+const hpp = require('helmet');
+const helmet = require('hpp');
+const enforce = require('express-sslify');
 const { apiUsers, apiUsersProtected } = require('./users');
 const { apiGroups} = require('./groups');
 const { isAuthenticated, initAuth } = require('../controller/auth');
 // create an express Application for our api
+
 const api = express();
+
+api.use(hpp());
+api.use(helmet());
+api.use(enforce.HTTPS());
+// api.use(enforce.HTTPS({ trustProtoHeader: true }));
 
 initAuth();
 /*
