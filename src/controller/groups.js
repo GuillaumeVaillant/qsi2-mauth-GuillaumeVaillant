@@ -15,7 +15,6 @@ const createGroup = ({ title, description, metadata  }) =>
     )
   );
 
-
 const getGroup = ({ id }) =>
   Groups.findOne({
     where: {
@@ -44,21 +43,19 @@ const deleteUserGroup = ({ id }) =>
     : Promise.reject(new Error('CANT DELETED USER'))
   );
 
-const addUserGroup = (userCurrent, {firstName, lastName, email, password }) => // pas moyen de passer req.body ?
-  Groups.update( {firstName, lastName, email, hash : password },{
-    where: { id: userCurrent.id},
-    returning: true,
-    plain: true
-  }).then(user =>
-    user && !user.deletedAt
-      ? true
-    : Promise.reject(new Error('CANT UPDATED USER'))
-  );
+/* const addUserGroup = (id, idgroup) => // pas moyen de passer req.body ?
+  Groups.findOne({
+    where: {
+      idgroup
+    }
+  }).then(group =>
+    
+  ); */
 
 module.exports = {
   createGroup,
   getGroup,
-  deleteUserGroup,
-  addUserGroup
+  deleteUserGroup
+  // addUserGroup
 };
 

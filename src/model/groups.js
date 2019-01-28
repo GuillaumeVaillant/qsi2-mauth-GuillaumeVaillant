@@ -2,7 +2,7 @@ module.exports = (sequelize, DataTypes) => {
   const Groups = sequelize.define(
     'Groups',
     {
-      id: {
+      idGroup: {
       // Avoid usage of auto-increment numbers, UUID is a better choice
       type: DataTypes.UUID,
       defaultValue: DataTypes.UUIDV4,
