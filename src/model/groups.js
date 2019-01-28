@@ -25,5 +25,8 @@ module.exports = (sequelize, DataTypes) => {
       }
     }
   );
+
+  Groups.associate = modeles => Groups.belongsToMany(modeles.Users, {through: 'UsersGroup'});
+
   return Groups;
 };

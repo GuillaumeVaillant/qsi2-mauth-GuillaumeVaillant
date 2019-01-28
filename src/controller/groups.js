@@ -43,19 +43,19 @@ const deleteUserGroup = ({ id }) =>
     : Promise.reject(new Error('CANT DELETED USER'))
   );
 
-/* const addUserGroup = (id, idgroup) => // pas moyen de passer req.body ?
+const addUserGroup = (id, idGroup) => // pas moyen de passer req.body ?
   Groups.findOne({
     where: {
-      idgroup
+      idGroup
     }
   }).then(group =>
-    
-  ); */
+    group ? group.addUser(id) : Promise.reject(new Error('CANT ADD USER IN GROUP'))
+  );
 
 module.exports = {
   createGroup,
   getGroup,
-  deleteUserGroup
-  // addUserGroup
+  deleteUserGroup,
+  addUserGroup
 };
 
