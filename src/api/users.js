@@ -62,7 +62,7 @@ apiUsers.post('/', (req, res) =>
  * @apiSuccess {JSON} profile Profile informations about the User.
  */
 apiUsers.post('/login', (req, res) =>
-  !req.body.id || !req.body.idGroup
+  !req.body.email || !req.body.password
     ? res.status(400).send({
         success: false,
         message: 'email and password are required'

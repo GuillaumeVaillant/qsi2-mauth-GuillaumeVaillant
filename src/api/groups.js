@@ -1,6 +1,6 @@
 const express = require('express');
 const jwt = require('jwt-simple');
-const { createGroup, addUserGroup, getGroup } = require('../controller/groups');
+const { createGroup, addUserGroup, getGroup, deleteUserGroup } = require('../controller/groups');
 const logger = require('../logger');
 
 const apiGroups = express.Router();
@@ -24,10 +24,10 @@ apiGroups.get('/', (req, res) =>
 );
 
 apiGroups.post('/', (req, res) =>
-  !req.body.title || !req.body.description 
+  !req.body.title || !req.body.GroupAdmin
     ? res.status(400).send({
         success: false,
-        message: 'title and description are required'
+        message: 'title and admin are required'
       })
     : createGroup(req.body)
         .then(group => {
@@ -43,7 +43,7 @@ apiGroups.post('/', (req, res) =>
           logger.error(`💥 Failed to create group : ${err.stack}`);
           return res.status(500).send({
             success: false,
-            message: `${err.name} : ${err.message}`
+            message: `${err.name} : ${err.message}` || !req.body.metadata[0].admin 
           });
         })
 );
@@ -69,6 +69,29 @@ apiGroups.put('/', (req, res) =>
       });
     })
 );
+
+apiGroups.delete('/', (req, res) =>
+  !req.body.id && !req.body.idGroup
+    ? res.status(400).send({
+        success: false,
+        message: 'id and idGroup are required',
+      })
+    : deleteUserGroup(req.body.id ,req.body.idGroup)
+        .then(() => {
+          res.status(201).send({
+            success: true,
+            message: 'delete user in group works'
+          });
+        })
+        .catch(err => {
+          logger.error(`💥 Failed to delete user in group : ${err.stack}`);
+          return res.status(500).send({
+            success: false,
+            message: `${err.name} : ${err.message}`,
+          });
+        })
+);
+
 
 
 module.exports = { apiGroups };

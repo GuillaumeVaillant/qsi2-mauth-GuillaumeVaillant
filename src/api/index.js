@@ -11,8 +11,8 @@ const api = express();
 
 api.use(hpp());
 api.use(helmet());
-api.use(enforce.HTTPS());
-// api.use(enforce.HTTPS({ trustProtoHeader: true }));
+// api.use(enforce.HTTPS());
+api.use(enforce.HTTPS({ trustProtoHeader: true }));
 
 initAuth();
 /*
@@ -38,10 +38,10 @@ apiRoutes
   )
   // connect api users router
   .use('/users', apiUsers)
-  .use('/groups',apiGroups)
   // api bellow this middelware require Authorization -> à partir d'ici il faut avoir un token valide
   .use(isAuthenticated)
   .use('/users', apiUsersProtected)
+  .use('/groups',apiGroups)
   .use((err, req, res, next) => {
     res.status(403).send({
       success: false,

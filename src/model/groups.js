@@ -18,7 +18,7 @@ module.exports = (sequelize, DataTypes) => {
         comment: 'description'
       },
       metadata: {
-        type: DataTypes.JSON,
+        type: DataTypes.JSONB,
         // Not null management
         allowNull: false,
         comment: 'metadata'
@@ -26,7 +26,15 @@ module.exports = (sequelize, DataTypes) => {
     }
   );
 
-  Groups.associate = modeles => Groups.belongsToMany(modeles.Users, {through: 'UsersGroup'});
+  Groups.associate = modeles => {
+    Groups.belongsToMany(modeles.Users, {through: 'UsersGroup'});
+    Groups.belongsTo(modeles.Users, { as: 'GroupAdmin' }); // gestion des rôles
+  }
 
+  /*
+  Du coup dans la nouvelle table 
+  grouidgroup = id du groupe 
+  userid = admin du groupe
+  */
   return Groups;
 };

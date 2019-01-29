@@ -1,50 +1,52 @@
-const omit = require('lodash.omit');
+// const omit = require('lodash.omit');
 const { Groups } = require('../model');
 
-const createGroup = ({ title, description, metadata  }) =>
+const createGroup = ({ title, description, metadata, GroupAdmin  }) =>
   Groups.create({
     title: title || '',
     description: description || '',
-    metadata
+    metadata,
+    GroupAdmin
   }).then(group =>
-    omit(
-      group.get({
-        plain: true
-      }),
-      Groups.excludeAttributes
-    )
+    group ? Promise.resolve(group.addUser(GroupAdmin)) : Promise.reject(new Error('CANT CREATE GROUP'))
   );
 
+  
 const getGroup = () =>
   Groups.findAll();
 
-// UpdateAt automatique refresh -> 
-const deleteUserGroup = ({ id }) =>
-  Groups.update( {deletedAt : Date.now() },{
-    where: {id},
-    returning: true,
-    plain: true
-  }).then(user =>
-    user && !user.deletedAt
-      ? true
-    : Promise.reject(new Error('CANT DELETED USER'))
-  );
 
-const addUserGroup = (id, idGroup) => // pas moyen de passer req.body ?
+const deleteUserGroup = (id, idGroup) =>
   Groups.findOne({
     where: {
       idGroup
     }
   }).then(group =>
-    group ? group.addUser(id) : Promise.reject(new Error('CANT ADD USER IN GROUP'))
+    group ? Promise.resolve(group.removeUser(id)) : Promise.reject(new Error('CANT ADD USER IN GROUP'))
   );
 
+const addUserGroup = (id, idGroup) => 
+  Groups.findOne({
+    where: {
+      idGroup
+    }
+  }).then(group =>
+    group ? Promise.resolve(group.addUser(id)) : Promise.reject(new Error('CANT ADD USER IN GROUP'))
+  );
+
+const isUserGroup = ({ id, idGroup }) =>
+  Groups.findOne({
+    where: { idGroup},
+  }).then(group => 
+    group.hasUser(id)
+  );
 
 
 module.exports = {
   createGroup,
   getGroup,
   deleteUserGroup,
-  addUserGroup
+  addUserGroup,
+  isUserGroup
 };
 
